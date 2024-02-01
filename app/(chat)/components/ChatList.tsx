@@ -1,9 +1,15 @@
 import { ChatBubble } from ".";
 
-export function ChatList() {
+interface ChatListProps {
+  chatData: IChat[];
+}
+
+export function ChatList({ chatData }: ChatListProps) {
   return (
     <ul>
-      <ChatBubble />
+      {chatData.map(({ key, content }) => (
+        <ChatBubble key={key} content={content} />
+      ))}
     </ul>
   );
 }

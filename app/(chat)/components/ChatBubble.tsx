@@ -1,3 +1,3 @@
-export function ChatBubble() {
-  return <li></li>;
+export function ChatBubble({ content }: Pick<IChat, "content">) {
+  return <li>{content}</li>;
 }

@@ -3,19 +3,17 @@ import { RefObject } from "react";
 
 interface ChatSendButtonProps extends Omit<ButtonProps, "onClick"> {
   inputRef: RefObject<HTMLInputElement>;
+  sendMessage: () => void;
 }
 
 export function ChatSendButton({
   inputRef,
+  sendMessage,
   children,
   ...props
 }: ChatSendButtonProps) {
-  const onClickChatSendButton = () => {
-    console.log(inputRef.current?.value);
-  };
-
   return (
-    <Button {...props} onClick={onClickChatSendButton}>
+    <Button {...props} onClick={sendMessage}>
       {children}
     </Button>
   );
