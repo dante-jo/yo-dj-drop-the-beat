@@ -1,6 +1,8 @@
 import { KeyboardEventHandler, useRef } from "react";
 import { ChatInput, ChatSendButton } from ".";
 
+let isSending = false;
+
 export function ChatBottom() {
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -14,6 +16,7 @@ export function ChatBottom() {
 
       messageData.append("author", "tester");
       messageData.append("content", content);
+
       const res = await fetch("/api/chat", {
         method: "POST",
         body: messageData,
@@ -27,8 +30,14 @@ export function ChatBottom() {
   };
 
   const onChatInputEnter: KeyboardEventHandler<HTMLInputElement> = (e) => {
+    if (isSending) return;
+
     if (e.key === "Enter") {
+      isSending = true;
       sendMessage();
+      setTimeout(() => {
+        isSending = false;
+      }, 200);
     }
   };
 

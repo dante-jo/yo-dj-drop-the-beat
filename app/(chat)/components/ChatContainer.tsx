@@ -1,43 +1,28 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import io, { Socket } from "socket.io-client";
+import { useSocket } from "@/libs/hooks";
+import { useEffect, useState } from "react";
 import { ChatList } from ".";
 import { ChatBottom } from "./ChatBottom";
 
 export function ChatContainer() {
-  const [connected, setConnected] = useState(false);
   const [chatData, setChatData] = useState<IChat[]>([]);
-  const socketRef = useRef<Socket | null>(null);
+  const { socket } = useSocket();
 
   useEffect(() => {
-    const socketInitializer = async () => {
-      await fetch("/api/socket");
-      socketRef.current = io();
+    if (!socket) return;
 
-      socketRef.current.on("connect", () => {
-        console.log("connected", socketRef.current);
-        setConnected(true);
-      });
-
-      socketRef.current.on("error", (error: any) => {
-        console.error(error);
-      });
-
-      socketRef.current.on("message", (message: IChat) => {
-        console.log(message);
-        setChatData((prev) => [...prev, message]);
-      });
+    const messageListener = (message: IChat) => {
+      console.log(message);
+      setChatData((prev) => [...prev, message]);
     };
 
-    socketInitializer();
+    socket.on("message", messageListener);
 
     return () => {
-      if (socketRef.current) {
-        socketRef.current.disconnect();
-      }
+      socket.off("message", messageListener);
     };
-  }, []);
+  }, [socket]);
 
   return (
     <>
